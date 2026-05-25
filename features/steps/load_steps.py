@@ -34,7 +34,7 @@ HTTP_204_NO_CONTENT = 204
 def step_impl(context):
     """ Delete all Products and load new ones """
     #
-    # List all of the products and delete them one by one
+
     #
     rest_endpoint = f"{context.base_url}/products"
     context.resp = requests.get(rest_endpoint)
@@ -48,5 +48,14 @@ def step_impl(context):
     #
     for row in context.table:
         #
-        # ADD YOUR CODE HERE TO CREATE PRODUCTS VIA THE REST API
+        for row in context.table:
+            payload = {
+                "name": row['name'],
+                "description": row['description'],
+                "price": row['price'],
+                "available": row['available'] in ['True', 'true', '1'],
+                "category": row['category']
+            }
+        context.resp = requests.post(rest_endpoint, json=payload)
+        assert context.resp.status_code == HTTP_201_CREATED
         #
